@@ -17,7 +17,7 @@ keypoints:
 
 ## Writing my first query
 
-Let's start by using the **surveys** table. Here we have data on every
+Let's start by using the **TCP** table. Here we have data on every
 individual that was captured at the site, including when they were captured,
 what plot they were captured on, their species ID, sex and weight in grams.
 
@@ -25,8 +25,8 @@ Let’s write an SQL query that selects only the year column from the
 surveys table. SQL queries can be written in the box located under 
 the "Execute SQL" tab. Click 'Run SQL' to execute the query in the box.
 
-    SELECT year
-    FROM surveys;
+    SELECT date
+    FROM dates;
 
 We have capitalized the words SELECT and FROM because they are SQL keywords.
 SQL is case insensitive, but it helps for readability, and is good style.
@@ -34,13 +34,13 @@ SQL is case insensitive, but it helps for readability, and is good style.
 If we want more information, we can just add a new column to the list of fields,
 right after SELECT:
 
-    SELECT year, month, day
-    FROM surveys;
+    SELECT date, authors
+    FROM tcp;
 
 Or we can select all of the columns in a table using the wildcard *
 
     SELECT *
-    FROM surveys;
+    FROM tcp;
 
 ### Limiting results
 
@@ -49,7 +49,7 @@ of what's being returned. In that case you can use the LIMIT command. In particu
 you would want to do this if you were working with large databases.
 
     SELECT *
-    FROM surveys
+    FROM tcp
     LIMIT 10; 
 
 ### Unique values
@@ -57,14 +57,14 @@ you would want to do this if you were working with large databases.
 If we want only the unique values so that we can quickly see what species have
 been sampled we use `DISTINCT` 
 
-    SELECT DISTINCT species_id
-    FROM surveys;
+    SELECT DISTINCT author
+    FROM authors;
 
 If we select more than one column, then the distinct pairs of values are
 returned
 
-    SELECT DISTINCT year, species_id
-    FROM surveys;
+    SELECT DISTINCT author, eebo
+    FROM authors;
 
 ### Calculated values
 
@@ -72,18 +72,18 @@ We can also do calculations with the values in a query.
 For example, if we wanted to look at the mass of each individual
 on different dates, but we needed it in kg instead of g we would use
 
-    SELECT year, month, day, weight/1000
-    FROM surveys;
+    SELECT date, page/10
+    FROM tcp;
 
-When we run the query, the expression `weight / 1000` is evaluated for each
+When we run the query, the expression `tcp / 1000` is evaluated for each
 row and appended to that row, in a new column. If we used the `INTEGER` data type
 for the weight field then integer division would have been done, to obtain the
 correct results in that case divide by `1000.0`. Expressions can use any fields,
 any arithmetic operators (`+`, `-`, `*`, and `/`) and a variety of built-in
 functions. For example, we could round the values to make them easier to read.
 
-    SELECT plot_id, species_id, sex, weight, ROUND(weight / 1000, 2)
-    FROM surveys;
+    SELECT eebo, title, ROUND(weight / 100, 2)
+    FROM tcp;
 
 > ## Challenge
 >
@@ -93,28 +93,28 @@ functions. For example, we could round the values to make them easier to read.
 ## Filtering
 
 Databases can also filter data – selecting only the data meeting certain
-criteria.  For example, let’s say we only want data for the species
-_Dipodomys merriami_, which has a species code of DM.  We need to add a
+criteria.  For example, let’s say we only want data for the titles that
+have a free status, which has a species code of DM.  We need to add a
 `WHERE` clause to our query:
 
     SELECT *
-    FROM surveys
-    WHERE species_id='DM';
+    FROM tcp
+    WHERE status='Free';
 
 We can do the same thing with numbers.
-Here, we only want the data since 2000:
+Here, we only want the data since 1640:
 
-    SELECT * FROM surveys
-    WHERE year >= 2000;
+    SELECT * FROM tcp
+    WHERE date >= '2000';
 
 If we used the `TEXT` data type for the year the `WHERE` clause should
 be `year >= '2000'`. We can use more sophisticated conditions by combining tests
-with `AND` and `OR`.  For example, suppose we want the data on *Dipodomys merriami*
-starting in the year 2000:
+with `AND` and `OR`.  For example, suppose we want the data on *Free* status
+starting in the year 1640:
 
     SELECT *
     FROM surveys
-    WHERE (year >= 2000) AND (species_id = 'DM');
+WHERE (year >= '1640') AND (status = 'Free');
 
 Note that the parentheses are not needed, but again, they help with
 readability.  They also ensure that the computer combines `AND` and `OR`

@@ -19,7 +19,7 @@ keypoints:
 
 _Note: this should have been done by participants before the start of the workshop._
 
-We use [SQLite Manager](https://addons.mozilla.org/en-us/firefox/addon/sqlite-manager/)
+We use [DB Browser for SQLite](http://sqlitebrowser.org/)
 and the 
 [Portal Project dataset](https://figshare.com/articles/Portal_Project_Teaching_Database/1314459)
 throughout this lesson. See [Setup](/sql-ecology-lesson/setup/) for
@@ -36,13 +36,10 @@ use it for analysis and visualization.
 
 ## Dataset Description
 
-The data we will be using is a time-series for a small mammal community in
-southern Arizona. This is part of a project studying the effects of rodents and
-ants on the plant community that has been running for almost 40 years.  The
-rodents are sampled on a series of 24 plots, with different experimental
-manipulations controlling which rodents are allowed to access which plots.
+The data we will be using is a time-series for the texts collected and encoded by
+the Text Creation Partnership. 
 
-This is a real dataset that has been used in over 100 publications. We've
+This is a real dataset. We've
 simplified it just a little bit for the workshop, but you can download the
 [full dataset](http://esapubs.org/archive/ecol/E090/118/) and work with it using
 exactly the same tools we'll learn about today.
@@ -54,9 +51,9 @@ from the
 [Portal Project dataset](https://figshare.com/articles/Portal_Project_Teaching_Database/1314459).  
 We'll need the following three files: 
 
-* `surveys.csv`
-* `species.csv`
-* `plots.csv`
+* `authors.csv`
+* `titles.csv`
+* `dates.csv`
 
 > ## Challenge
 >
@@ -64,9 +61,9 @@ We'll need the following three files:
 > What information is contained in each file?  Specifically, if I had 
 > the following research questions: 
 > 
-> * How has the hindfoot length and weight of *Dipodomys* species changed over time?
-> * What is the average weight of each species, per year?  
-> * What information can I learn about *Dipodomys* species in the 2000s, over time?
+> * How has the hindfoot length and weight of *Martin Luther* species changed over time?
+> * What is the average number of each titles, per year?  
+> * What information can I learn about *Martin Luther* species in the 1500s, over time?
 > 
 > What would I need to answer these questions?  Which files have the data I need? What 
 > operations would I need to perform if I were doing these analyses by hand?  
@@ -146,7 +143,7 @@ describes the columns, often called *fields*. (The rows of a database table
 are called *records*.)  If you scroll down in the Structure view, you'll 
 see a list of fields, their labels, and their data *type*.  Each field contains 
 one variety or type of data, often numbers or text.  You can see in the 
-`surveys` table that most fields contain numbers (integers) while the `species` 
+`dates` table that most fields contain numbers (integers) while the `titles` 
 table is nearly all text.  
 
 The "Execute SQL" tab is blank now - this is where we'll be typing our queries 
@@ -181,13 +178,13 @@ follow these instructions:
     - **Database -> New Database**
     - Give a name **Ok -> Open**. Creates the database in the opened folder
 2. Start the import **Database -> Import**
-3. Select the `surveys.csv` file to import
-4. Give the table a name that matches the file name (`surveys`), or use the default
+3. Select the `TCP.csv` file to import
+4. Give the table a name that matches the file name (`authors`), or use the default
 5. If the first row has column headings, check the appropriate box
 6. Make sure the delimiter and quotation options are appropriate for the CSV files.  Ensure 'Ignore trailing Separator/Delimiter' is left *unchecked*.
 7. Press **OK**
 8. When asked if you want to modify the table, click **OK**
-9. Set the data types for each field using the suggestions in the table below (this includes fields from `plots` and `species` tables also):
+9. Set the data types for each field using the suggestions in the table below (this includes fields from `dates` and `titles` tables also):
 
 | Field             | Data Type      | Motivation                                                                       | Table(s)          |
 |-------------------|:---------------|----------------------------------------------------------------------------------|-------------------|
@@ -211,7 +208,7 @@ Finally, click **OK** one more time to confirm the operation.
 
 > ## Challenge
 >
-> - Import the `plots` and `species` tables
+> - Import the `authors` and `dates` tables
 {: .challenge}
 
 You can also use this same approach to append new data to an existing table.

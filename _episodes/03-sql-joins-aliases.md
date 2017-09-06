@@ -32,9 +32,9 @@ tables using the word `ON`.  What we want is to join the data with the same
 species codes.
 
     SELECT *
-    FROM surveys
-    JOIN species
-    ON surveys.species_id = species.species_id;
+    FROM authors
+    JOIN titles
+    ON authors.species_id = titles.species_id;
 
 `ON` is like `WHERE`, it filters things out according to a test condition.  We use
 the `table.colname` format to tell the manager what column in which table we are
@@ -55,11 +55,11 @@ telling the manager that we want to combine `surveys` with `species` and that
 the common column is `species_id`.
 
     SELECT *
-    FROM surveys
-    JOIN species
-    USING (species_id);
+    FROM authors
+    JOIN titles
+    USING (eebo);
 
-The output will only have one **species_id** column
+The output will only have one **eebo** column
 
 | record_id | month | day | year | plot_id | species_id | sex | hindfoot_length | weight  | genus | species | taxa |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -74,10 +74,10 @@ For example, what if we wanted information on when individuals of each
 species were captured, but instead of their species ID we wanted their
 actual species names.
 
-    SELECT surveys.year, surveys.month, surveys.day, species.genus, species.species
-    FROM surveys
-    JOIN species
-    ON surveys.species_id = species.species_id;
+    SELECT tcp.terms, tcp.title
+    FROM tcp
+    JOIN authors
+    ON tcp.species_id = authors.species_id;
 
 | year | month | day | genus | species |
 |---|---|---|---|---|
@@ -89,17 +89,17 @@ actual species names.
 Many databases, including SQLite, also support a join through the WHERE clause of a query.  
 For example, you may see the query above written without an explicit JOIN.
 
-	SELECT surveys.year, surveys.month, surveys.day, species.genus, species.species
-	FROM surveys, species
-	WHERE surveys.species_id = species.species_id;
+	SELECT titles.title, authors.author
+	FROM authors, titles
+	WHERE authors.eebo = titles.title;
 
 For the remainder of this lesson, we'll stick with the explicit use of the JOIN keyword for 
 joining tables in SQL.  
 
 > ## Challenge:
 >
-> - Write a query that returns the genus, the species, and the weight
-> of every individual captured at the site
+> - Write a query that returns the authors, terms and page lengths
+> of every EEBO ID captured in the catalogue.
 {: .challenge}
 
 ### Different join types
@@ -107,14 +107,14 @@ joining tables in SQL.
 We can count the number of records returned by our original join query.
 
     SELECT COUNT(*)
-    FROM surveys
-    JOIN species
-    USING (species_id);
+    FROM authors
+    JOIN titles
+    USING (eebo);
 
 Notice that this number is smaller than the number of records present in the
 survey data.
 
-    SELECT COUNT(*) FROM surveys;
+    SELECT COUNT(*) FROM tcp;
 
 This is because, by default, SQL only returns records where the joining value
 is present in the join columns of both tables (i.e. it takes the _intersection_
@@ -132,8 +132,8 @@ table by using the command `LEFT OUTER JOIN`, or `LEFT JOIN` for short.
 {: .challenge}
 
 > ## Challenge:
-> - Count the number of records in the `surveys` table that have a `NULL` value
-> in the `species_id` column.
+> - Count the number of records in the `tcp` table that have a `NULL` value
+> in the `eebo` column.
 {: .challenge}
 
 In SQL a `NULL` value in one table can never be joined to a NULL value in a
@@ -145,20 +145,20 @@ Joins can be combined with sorting, filtering, and aggregation.  So, if we
 wanted average mass of the individuals on each different type of treatment, we
 could do something like
 
-    SELECT plots.plot_type, AVG(surveys.weight)
-    FROM surveys
-    JOIN plots
-    ON surveys.plot_id = plots.plot_id
-    GROUP BY plots.plot_type;
+    SELECT authors.author, AVG(tcp.Pages)
+    FROM tcp
+    JOIN authors
+    ON authors.eebo = tcp.eebo
+    GROUP BY tcp.Pages;
 
 > ## Challenge:
 >
-> - Write a query that returns the number of genus of the animals caught in each plot in descending order.
+> - Write a query that returns the number of authors of the titles published in each year in descending order.
 {: .challenge}
 
 > ## Challenge:
 >
-> - Write a query that finds the average weight of each rodent species (i.e., only include species with Rodent in the taxa field).
+> - Write a query that finds the average pages of each year of publication.
 {: .challenge}
 
 ## Functions
@@ -171,21 +171,21 @@ place of `NULL`.
 
 We can represent unknown sexes with "U" instead of `NULL`:
 
-    SELECT species_id, sex, IFNULL(sex, 'U')
-    FROM surveys;
+    SELECT eebo, vid, IFNULL(vid, 'U')
+    FROM tcp;
 
-The lone "sex" column is only included in the query above to illustrate where
+The lone "vid" column is only included in the query above to illustrate where
 `IFNULL` has changed values; this isn't a usage requirement.
 
 > ## Challenge:
 >
 > - Write a query that returns 30 instead of `NULL` for values in the
-> `hindfoot_length` column.
+> `pages` column.
 {: .challenge}
 
 > ## Challenge:
 >
-> - Write a query that calculates the average hind-foot length of each species,
+> - Write a query that calculates the average page length of each title,
 > assuming that unknown lengths are 30 (as above).
 {: .challenge}
 
@@ -194,16 +194,16 @@ The lone "sex" column is only included in the query above to illustrate where
 was `NULL`. We can use `IFNULL` to include them again, re-writing the `NULL` to
 a valid joining value:
 
-    SELECT surveys.year, surveys.month, surveys.day, species.genus, species.species
-    FROM surveys
-    JOIN species
-    ON surveys.species_id = IFNULL(species.species_id, 'AB');
+    SELECT dates.date, authors.author
+    FROM authors
+    JOIN dates
+    ON dates.eebo = IFNULL(authors.author, 'AB');
 
 > ## Challenge:
 >
-> - Write a query that returns the number of genus of the animals caught in each
-> plot, using `IFNULL` to assume that unknown species are all of the genus
-> "Rodent".
+> - Write a query that returns the number of titles of the authors caught in each
+> plot, using `IFNULL` to assume that unknown titles are all of the authors
+> "Nemo".
 {: .challenge}
 
 The inverse of `IFNULL` is `NULLIF`. This returns `NULL` if the first argument
@@ -212,8 +212,8 @@ is returned. This is useful for "nulling out" specific values.
 
 We can "null out" plot 7:
 
-    SELECT species_id, plot_id, NULLIF(plot_id, 7)
-    FROM surveys;
+    SELECT eebo, vid, NULLIF(vid, 7)
+    FROM tcp;
 
 Some more functions which are common to SQL databases are listed in the table
 below:
@@ -240,7 +240,7 @@ table below:
 
 > ## Challenge:
 >
-> Write a query that returns genus names, sorted from longest genus name down
+> Write a query that returns author names, sorted from longest titles name down
 > to shortest.
 {: .challenge}
 
@@ -251,28 +251,28 @@ clearer we can use aliases to assign new names to things in the query.
 
 We can alias both table names:
 
-    SELECT surv.year, surv.month, surv.day, sp.genus, sp.species
-    FROM surveys AS surv
-    JOIN species AS sp
-    ON surv.species_id = sp.species_id;
+    SELECT dt.dates, auth.authors
+    FROM dates AS dt
+    JOIN authors AS auth
+    ON dt.eebo = auth.eebo;
 
 And column names:
 
-    SELECT surv.year AS yr, surv.month AS mo, surv.day AS day, sp.genus AS gen, sp.species AS sp
-    FROM surveys AS surv
-    JOIN species AS sp
-    ON surv.species_id = sp.species_id;
+    SELECT dt.dates AS yr, auth.authors AS author
+    FROM dates AS dt
+    JOIN authors AS auth
+    ON dt.eebo = auth.eebo;
 
 The `AS` isn't technically required, so you could do
 
-    SELECT surv.year yr
-    FROM surveys surv;
+    SELECT dt.dates yr
+    FROM dates dt;
 
 but using `AS` is much clearer so it is good style to include it.
 
 > ## Challenge (optional):
 >
-> SQL queries help us *ask* specific *questions* which we want to answer about our data. The real skill with SQL is to know how to translate our scientific questions into a sensible SQL query (and subsequently visualize and interpret our results).
+> SQL queries help us *ask* specific *questions* which we want to answer about our data. The real skill with SQL is to know how to translate our humanities questions into a sensible SQL query (and subsequently visualize and interpret our results).
 >
 > Have a look at the following questions; these questions are written in plain English. Can you translate them to *SQL queries* and give a suitable answer?  
 > 

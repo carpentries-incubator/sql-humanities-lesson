@@ -25,24 +25,20 @@ Let’s go to the surveys table and find out how many individuals there are.
 Using the wildcard simply counts the number of records (rows):
 
     SELECT COUNT(*)
-    FROM surveys;
+    FROM tcp;
 
-We can also find out how much all of those individuals weigh:
+We can also find out how much all of the total page length:
 
-    SELECT COUNT(*), SUM(weight)
-    FROM surveys;
+    SELECT COUNT(*), SUM(pages)
+    FROM tcp;
 
-We can output this value in kilograms, rounded to 3 decimal places:
-
-    SELECT ROUND(SUM(weight)/1000, 3)
-    FROM surveys;
 
 There are many other aggregate functions included in SQL including
 `MAX`, `MIN`, and `AVG`.
 
 > ## Challenge
 >
-> Write a query that returns: total weight, average weight, and the min and max weights
+> Write a query that returns: total page length, average page length, and the min and max page lengths
 > for all animals caught over the duration of the survey.
 > Can you modify it so that it outputs these values only for weights between 5 and 10?
 {: .challenge}
@@ -50,9 +46,9 @@ There are many other aggregate functions included in SQL including
 Now, let's see how many individuals were counted in each species. We do this
 using a `GROUP BY` clause
 
-    SELECT species_id, COUNT(*)
-    FROM surveys
-    GROUP BY species_id;
+    SELECT eebo, COUNT(*)
+    FROM tcp
+    GROUP BY eebo;
 
 `GROUP BY` tells SQL what field or fields we want to use to aggregate the data.
 If we want to group by multiple fields, we give `GROUP BY` a comma separated list.
@@ -61,10 +57,10 @@ If we want to group by multiple fields, we give `GROUP BY` a comma separated lis
 >
 > Write queries that return:
 >
-> 1. How many individuals were counted in each year
+> 1. How many groups of terms were created in each year
 >    *   in total
->    *   per each species
-> 2. Average weight of each species in each year.
+>    *   per author
+> 2. Average number of each term groupings in each year.
 >
 > Can you modify the above queries combining them into one?
 {: .challenge}
@@ -76,12 +72,12 @@ filter the results according to some criteria. SQL offers a mechanism to
 filter the results based on aggregate functions, through the `HAVING` keyword.
 
 For example, we can adapt the last request we wrote to only return information
-about species with a count higher than 10:
+about page length with a count higher than 10:
 
-    SELECT species_id, COUNT(species_id)
-    FROM surveys
-    GROUP BY species_id
-    HAVING COUNT(species_id) > 10;
+    SELECT eebo, COUNT(Pages)
+    FROM TCP
+    GROUP BY Pages
+    HAVING COUNT(Pages) > 100;
 
 The `HAVING` keyword works exactly like the `WHERE` keyword, but uses
 aggregate functions instead of database fields.
@@ -103,8 +99,8 @@ of these groups (`HAVING`).
 
 > ## Challenge
 >
-> Write a query that returns, from the `species` table, the number of
-> `genus` in each `taxa`, only for the `taxa` with more than 10 `genus`.
+> Write a query that returns, from the `authors` table, the `eebo` IDs
+> in each `authors`, only for the `authors` with more than 5 works.
 {: .challenge}
 
 ## Ordering Aggregated Results
@@ -113,10 +109,10 @@ We can order the results of our aggregation by a specific column, including
 the aggregated column.  Let’s count the number of individuals of each
 species captured, ordered by the count:
 
-    SELECT species_id, COUNT(*)
+    SELECT author, COUNT(*)
     FROM surveys
-    GROUP BY species_id
-    ORDER BY COUNT(species_id);
+    GROUP BY author
+    ORDER BY COUNT(author);
 
 ## Saving Queries for Future Use
 
@@ -129,20 +125,20 @@ from several places before showing it to you.
 
 Creating a view from a query requires to add `CREATE VIEW viewname AS`
 before the query itself. For example, imagine that my project only covers
-the data gathered during the summer (May - September) of 2000.  That
+the data gathered of books published between 1642 - 1651.  That
 query would look like:
 
     SELECT *
-    FROM surveys
-    WHERE year = 2000 AND (month > 4 AND month < 10);
+    FROM tcp
+    WHERE (month > 1641 AND month < 1652);
 
 But we don't want to have to type that every time we want to ask a
 question about that particular subset of data.  Let's create a view:
 
-    CREATE VIEW summer_2000 AS
+    CREATE VIEW civil_war AS
     SELECT *
     FROM surveys
-    WHERE year = 2000 AND (month > 4 AND month < 10);
+    WHERE (month > 1641 AND month < 1652);
 
 You can also add a view using *Create View* in the *View* menu and see the
 results in the *Views* tab just like a table.
@@ -150,16 +146,16 @@ results in the *Views* tab just like a table.
 Now, we will be able to access these results with a much shorter notation:
 
     SELECT *
-    FROM summer_2000;
+    FROM civil_war;
 
 There should only be six records.  If you look at the `weight` column, it's
 easy to see what the average weight would be.  If we use SQL to find the
-average weight, SQL behaves like we would hope, ignoring
-the NULL values:
+average page count of books that are available, SQL behaves like we would hope, 
+ignoring the NULL values:
 
-    SELECT AVG(weight)
-    FROM summer_2000
-    WHERE species_id == 'PE';
+    SELECT AVG(Pages)
+    FROM civil_war
+    WHERE status == 'FREE';
 
 But if we try to be extra clever, and find the average ourselves,
 we might get tripped up:
@@ -173,31 +169,31 @@ values), but the `SUM` only includes the 4 records with data in the
 `weight` field, giving us an incorrect average.  However,
 our strategy *will* work if we modify the count command slightly:
 
-    SELECT SUM(weight), COUNT(weight), SUM(weight)/COUNT(weight)
-    FROM summer_2000
-    WHERE species_id == 'PE';
+    SELECT SUM(Pages), COUNT(Pages), SUM(Pages)/COUNT(Pages)
+    FROM civil_war
+    WHERE status == 'Free';
 
 When we count the weight field specifically, SQL ignores the records with data
 missing in that field.  So here is one example where NULLs can be tricky:
 `COUNT(*)` and `COUNT(field)` can return different values.
 
 Another case is when we use a "negative" query.  Let's count all the
-non-female animals:
+non-free titles:
 
     SELECT COUNT(*)
-    FROM summer_2000
-    WHERE sex != 'F';
+    FROM civil_war
+    WHERE status != 'Free';
 
-Now let's count all the non-male animals:
+Now let's count all the non-restricted titles:
 
     SELECT COUNT(*)
-    FROM summer_2000
-    WHERE sex != 'M';
+    FROM civil_war
+    WHERE status != 'Restricted';
 
 But if we compare those two numbers with the total:
 
     SELECT COUNT(*)
-    FROM summer_2000;
+    FROM civil_war;
 
 We'll see that they don't add up to the total!  That's because SQL
 doesn't automatically include NULL values in a negative conditional
@@ -208,12 +204,12 @@ but sometimes we may want the missing values included as well!  In that
 case, we'd need to change our query to:
 
     SELECT COUNT(*)
-    FROM summer_2000
-    WHERE sex != 'M' OR sex IS NULL;
+    FROM civil_war
+    WHERE status != 'Free' OR status IS NULL;
 
 There is one more subtlety we need to be aware of.
 Suppose we run this query:
 
-    SELECT COUNT(*), weight
-    FROM summer_2000;
+    SELECT COUNT(*), Pages
+    FROM civil_war;
 
