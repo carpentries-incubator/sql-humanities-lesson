@@ -34,7 +34,7 @@ species codes.
     SELECT *
     FROM authors
     JOIN titles
-    ON authors.species_id = titles.species_id;
+    ON authors.eebo = titles.eebo;
 
 `ON` is like `WHERE`, it filters things out according to a test condition.  We use
 the `table.colname` format to tell the manager what column in which table we are
@@ -44,14 +44,13 @@ The output of the `JOIN` command will have columns from first table plus the
 columns from the second table. For the above command, the output will be a table
 that has the following column names:
 
-| record_id | month | day | year | plot_id | species_id | sex | hindfoot_length | weight | species_id | genus | species | taxa |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| eebo | Authors | eebo | Title | 
+|---|---|---|---|---|
 | ... |||||||||||||   
-| 96  | 8  | 20  | 1997  | 12  | **DM**  |  M |  36  |  41  | **DM** | Dipodomys  | merriami  | Rodent  |
-| ... |||||||||||||| 
+
 
 Alternatively, we can use the word `USING`, as a short-hand.  In this case we are
-telling the manager that we want to combine `surveys` with `species` and that
+telling the manager that we want to combine `authors` with `titlees` and that
 the common column is `species_id`.
 
     SELECT *
@@ -61,10 +60,8 @@ the common column is `species_id`.
 
 The output will only have one **eebo** column
 
-| record_id | month | day | year | plot_id | species_id | sex | hindfoot_length | weight  | genus | species | taxa |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| ... ||||||||||||
-| 96  | 8  | 20  | 1997  | 12  | DM  |  M |  36  |  41  | Dipodomys  | merriami  | Rodent  |
+| eebo | Authors | Title | 
+|---|---|---|---|---|
 | ... |||||||||||||
 
 We often won't want all of the fields from both tables, so anywhere we would
@@ -74,24 +71,21 @@ For example, what if we wanted information on when individuals of each
 species were captured, but instead of their species ID we wanted their
 actual species names.
 
-    SELECT tcp.terms, tcp.title
-    FROM tcp
+    SELECT authors.Authors, titles.Title
+    FROM titles
     JOIN authors
-    ON tcp.species_id = authors.species_id;
+    ON titles.EEBO = authors.EEBO;
 
-| year | month | day | genus | species |
+| Authors | Title |
 |---|---|---|---|---|
 | ... |||||
-| 1977 | 7 | 16 | Neotoma | albigula|
-| 1977 | 7 | 16 | Dipodomys | merriami|
-|...||||||
 
 Many databases, including SQLite, also support a join through the WHERE clause of a query.  
 For example, you may see the query above written without an explicit JOIN.
 
-	SELECT titles.title, authors.author
+	SELECT titles.Title, authors.Author
 	FROM authors, titles
-	WHERE authors.eebo = titles.title;
+	WHERE authors.eebo = titles.eebo;
 
 For the remainder of this lesson, we'll stick with the explicit use of the JOIN keyword for 
 joining tables in SQL.  
@@ -112,9 +106,10 @@ We can count the number of records returned by our original join query.
     USING (eebo);
 
 Notice that this number is smaller than the number of records present in the
-survey data.
+catalogue data.
 
-    SELECT COUNT(*) FROM tcp;
+    SELECT COUNT(*) 
+    FROM catalogue;
 
 This is because, by default, SQL only returns records where the joining value
 is present in the join columns of both tables (i.e. it takes the _intersection_
@@ -132,7 +127,7 @@ table by using the command `LEFT OUTER JOIN`, or `LEFT JOIN` for short.
 {: .challenge}
 
 > ## Challenge:
-> - Count the number of records in the `tcp` table that have a `NULL` value
+> - Count the number of records in the `catalogue` table that have a `NULL` value
 > in the `eebo` column.
 {: .challenge}
 
@@ -145,11 +140,11 @@ Joins can be combined with sorting, filtering, and aggregation.  So, if we
 wanted average mass of the individuals on each different type of treatment, we
 could do something like
 
-    SELECT authors.author, AVG(tcp.Pages)
-    FROM tcp
+    SELECT authors.author, AVG(catalogue.pages)
+    FROM catalogue
     JOIN authors
-    ON authors.eebo = tcp.eebo
-    GROUP BY tcp.Pages;
+    ON authors.eebo = catalogue.eebo
+    GROUP BY catalogue.pages;
 
 > ## Challenge:
 >
@@ -169,10 +164,10 @@ that operate on individual values as well. Probably the most important of these
 are `IFNULL` and `NULLIF`. `IFNULL` allows us to specify a value to use in
 place of `NULL`.
 
-We can represent unknown sexes with "U" instead of `NULL`:
+We can represent unknown ids with "U" instead of `NULL`:
 
     SELECT eebo, vid, IFNULL(vid, 'U')
-    FROM tcp;
+    FROM catalogue;
 
 The lone "vid" column is only included in the query above to illustrate where
 `IFNULL` has changed values; this isn't a usage requirement.
@@ -189,15 +184,15 @@ The lone "vid" column is only included in the query above to illustrate where
 > assuming that unknown lengths are 30 (as above).
 {: .challenge}
 
-`IFNULL` can be particularly useful in `JOIN`. When joining the `species` and
-`surveys` tables earlier, some results were excluded because the `species_id`
+`IFNULL` can be particularly useful in `JOIN`. When joining the `authors` and
+`dates` tables earlier, some results were excluded because the `species_id`
 was `NULL`. We can use `IFNULL` to include them again, re-writing the `NULL` to
 a valid joining value:
 
     SELECT dates.date, authors.author
     FROM authors
     JOIN dates
-    ON dates.eebo = IFNULL(authors.author, 'AB');
+    ON dates.eebo = IFNULL(authors.eebo, 'AB');
 
 > ## Challenge:
 >
@@ -210,10 +205,10 @@ The inverse of `IFNULL` is `NULLIF`. This returns `NULL` if the first argument
 is equal to the second argument. If the two are not equal, the first argument
 is returned. This is useful for "nulling out" specific values.
 
-We can "null out" plot 7:
+We can "null out" vid:
 
     SELECT eebo, vid, NULLIF(vid, 7)
-    FROM tcp;
+    FROM catalogue;
 
 Some more functions which are common to SQL databases are listed in the table
 below:
@@ -276,38 +271,13 @@ but using `AS` is much clearer so it is good style to include it.
 >
 > Have a look at the following questions; these questions are written in plain English. Can you translate them to *SQL queries* and give a suitable answer?  
 > 
-> 1. How many plots from each type are there?  
-> 
-> 2. How many specimens are of each sex are there for each year?  
-> 
-> 3. How many specimens of each species were captured in each type of plot?  
-> 
-> 4. What is the average weight of each taxa?  
-> 
-> 5. What is the percentage of each species in each taxa?  
-> 
-> 6. What are the minimum, maximum and average weight for each species of Rodent?  
+> 1. How many entries from each year are there per year?  
 >
-> 7. What is the average hindfoot length for male and female rodent of each species? Is there a Male / Female difference?  
-> 
-> 8. What is the average weight of each rodent species over the course of the years? Is there any noticeable trend for any of the species?  
->
+  2. How many years have similar amounts of books published?
 > > ## Proposed solutions:
 > >
-> > 1. Solution: `SELECT plot_type, count(*) AS num_plots  FROM plots  GROUP BY plot_type  ORDER BY num_plots DESC`
+> > 1. Solution: `SELECT date as year, count(*)  FROM catalogues  GROUP BY year ORDER BY year DESC`
 > >
-> > 2. Solution: `SELECT year, sex, count(*) AS num_animal  FROM surveys  WHERE sex IS NOT null  GROUP BY sex, year`
-> >
-> > 3. Solution: `SELECT species_id, plot_type, count(*) FROM surveys JOIN plots ON surveys.plot_id=plots.plot_id WHERE species_id IS NOT null GROUP BY species_id, plot_type`
-> >
-> > 4. Solution: `SELECT taxa, AVG(weight) FROM surveys JOIN species ON species.species_id=surveys.species_id GROUP BY taxa`
-> >
-> > 5. Solution: `SELECT taxa, 100.0*count(*)/(SELECT count(*) FROM surveys) FROM surveys JOIN species ON surveys.species_id=species.species_id GROUP BY taxa`
-> >
-> > 6. Solution: `SELECT surveys.species_id, MIN(weight) as min_weight, MAX(weight) as max_weight, AVG(weight) as mean_weight FROM surveys JOIN species ON surveys.species_id=species.species_id WHERE taxa = 'Rodent' GROUP BY surveys.species_id`
-> >
-> > 7. Solution: `SELECT surveys.species_id, sex, AVG(hindfoot_length) as mean_foot_length  FROM surveys JOIN species ON surveys.species_id=species.species_id WHERE taxa = 'Rodent' AND sex IS NOT NULL GROUP BY surveys.species_id, sex`
-> >
-> > 8. Solution: `SELECT surveys.species_id, year, AVG(weight) as mean_weight FROM surveys JOIN species ON surveys.species_id=species.species_id WHERE taxa = 'Rodent' GROUP BY surveys.species_id, year`
-> {: .solution}
+> > 2. Solution: `SELECT date as year, count(*) AS volumes  FROM catalogues  GROUP BY year ORDER BY volumes DESC`
+ {: .solution}
 {: .challenge}
