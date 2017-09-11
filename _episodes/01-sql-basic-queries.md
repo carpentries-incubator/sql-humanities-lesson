@@ -26,7 +26,7 @@ surveys table. SQL queries can be written in the box located under
 the "Execute SQL" tab. Click 'Run SQL' to execute the query in the box.
 
     SELECT date
-    FROM dates;
+    FROM catalogue;
 
 We have capitalized the words SELECT and FROM because they are SQL keywords.
 SQL is case insensitive, but it helps for readability, and is good style.
@@ -34,13 +34,13 @@ SQL is case insensitive, but it helps for readability, and is good style.
 If we want more information, we can just add a new column to the list of fields,
 right after SELECT:
 
-    SELECT date, authors
-    FROM tcp;
+    SELECT date, author
+    FROM catalogue;
 
 Or we can select all of the columns in a table using the wildcard *
 
     SELECT *
-    FROM tcp;
+    FROM catalogue;
 
 ### Limiting results
 
@@ -49,22 +49,22 @@ of what's being returned. In that case you can use the LIMIT command. In particu
 you would want to do this if you were working with large databases.
 
     SELECT *
-    FROM tcp
+    FROM catalogue
     LIMIT 10; 
 
 ### Unique values
 
-If we want only the unique values so that we can quickly see what species have
-been sampled we use `DISTINCT` 
+If we want only the unique values so that we can quickly see what authors have
+been cataloged we use `DISTINCT` 
 
     SELECT DISTINCT author
-    FROM authors;
+    FROM catalogue;
 
 If we select more than one column, then the distinct pairs of values are
 returned
 
     SELECT DISTINCT author, eebo
-    FROM authors;
+    FROM catalogue;
 
 ### Calculated values
 
@@ -72,22 +72,22 @@ We can also do calculations with the values in a query.
 For example, if we wanted to look at the mass of each individual
 on different dates, but we needed it in kg instead of g we would use
 
-    SELECT date, page/10
-    FROM tcp;
+    SELECT date, pages/10
+    FROM catalogue;
 
-When we run the query, the expression `tcp / 1000` is evaluated for each
+When we run the query, the expression `pages / 10` is evaluated for each
 row and appended to that row, in a new column. If we used the `INTEGER` data type
-for the weight field then integer division would have been done, to obtain the
-correct results in that case divide by `1000.0`. Expressions can use any fields,
+for the pages field then integer division would have been done, to obtain the
+correct results in that case divide by `10.0`. Expressions can use any fields,
 any arithmetic operators (`+`, `-`, `*`, and `/`) and a variety of built-in
 functions. For example, we could round the values to make them easier to read.
 
-    SELECT eebo, title, ROUND(weight / 100, 2)
-    FROM tcp;
+    SELECT eebo, title, ROUND(pages / 10, 2)
+    FROM catalogue;
 
 > ## Challenge
 >
-> - Write a query that returns The year, month, day, species_id and weight in mg
+> - Write a query that returns the year, EEBO and page length
 {: .challenge}
 
 ## Filtering
@@ -98,52 +98,45 @@ have a free status, which has a species code of DM.  We need to add a
 `WHERE` clause to our query:
 
     SELECT *
-    FROM tcp
+    FROM catalogue
     WHERE status='Free';
 
 We can do the same thing with numbers.
 Here, we only want the data since 1640:
 
-    SELECT * FROM tcp
-    WHERE date >= '2000';
+    SELECT * 
+    FROM catalogue
+    WHERE date >= '1641';
 
 If we used the `TEXT` data type for the year the `WHERE` clause should
-be `year >= '2000'`. We can use more sophisticated conditions by combining tests
+be `year >= '1641'`. We can use more sophisticated conditions by combining tests
 with `AND` and `OR`.  For example, suppose we want the data on *Free* status
 starting in the year 1640:
 
     SELECT *
-    FROM surveys
-WHERE (year >= '1640') AND (status = 'Free');
+    FROM catalogue
+    WHERE (year >= '1640') AND (status = 'Free');
 
 Note that the parentheses are not needed, but again, they help with
 readability.  They also ensure that the computer combines `AND` and `OR`
 in the way that we intend.
 
-If we wanted to get data for any of the *Dipodomys* species, which have
-species codes `DM`, `DO`, and `DS`, we could combine the tests using OR:
-
-    SELECT *
-    FROM surveys
-    WHERE (species_id = 'DM') OR (species_id = 'DO') OR (species_id = 'DS');
-
 > ## Challenge
 >
-> - Produce a table listing the data for all individuals in Plot 1 
-> that weighed more than 75 grams, telling us the date, species id code, and weight
-> (in kg). 
+> - Produce a table listing the data for all titles in the catalogue 
+> with a page length more than 75, telling us the date, eebo id code, and page. 
 {: .challenge}
 
 ## Building more complex queries
 
-Now, lets combine the above queries to get data for the 3 _Dipodomys_ species from
-the year 2000 on.  This time, let’s use IN as one way to make the query easier
-to understand.  It is equivalent to saying `WHERE (species_id = 'DM') OR (species_id
-= 'DO') OR (species_id = 'DS')`, but reads more neatly:
+Now, lets combine the above queries to get data for 2 authors from
+the year 1580 on.  This time, let’s use IN as one way to make the query easier
+to understand.  It is equivalent to saying `WHERE (author = 'Aylett, Robert, 1583-1655?') OR (author
+= 'Bacon, Francis, 1561-1626.'), but reads more neatly:
 
     SELECT *
-    FROM surveys
-    WHERE (year >= 2000) AND (species_id IN ('DM', 'DO', 'DS'));
+    FROM catalogue
+    WHERE (year >= 1580) AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
 
 We started with something simple, then added more clauses one by one, testing
 their effects as we went along.  For complex queries, this is a good strategy,
@@ -155,13 +148,13 @@ When the queries become more complex, it can be useful to add comments. In SQL,
 comments are started by `--`, and end at the end of the line. For example, a
 commented version of the above query can be written as:
 
-    -- Get post 2000 data on Dipodomys' species
-    -- These are in the surveys table, and we are interested in all columns
+    -- Get post 1580 data on authors
+    -- These are in the catalogue table, and we are interested in all columns
     SELECT * FROM surveys
-    -- Sampling year is in the column `year`, and we want to include 2000
+    -- Sampling year is in the column `Date`, and we want to include after 1580
     WHERE (year >= 2000)
-    -- Dipodomys' species have the `species_id` DM, DO, and DS
-    AND (species_id IN ('DM', 'DO', 'DS'));
+    -- Author names
+    AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
 
 Although SQL queries often read like plain English, it is *always* useful to add
 comments; this is especially true of more complex queries.
@@ -171,24 +164,24 @@ comments; this is especially true of more complex queries.
 We can also sort the results of our queries by using `ORDER BY`.
 For simplicity, let’s go back to the **species** table and alphabetize it by taxa.
 
-First, let's look at what's in the **species** table. It's a table of the species_id and the full genus, species and taxa information for each species_id. Having this in a separate table is nice, because we didn't need to include all
-this information in our main **surveys** table.
+First, let's look at what's in the **catalogue** table. It's a table of the eebo catalogue id and the 
+information for each id.
 
     SELECT *
-    FROM species;
+    FROM catalogue;
 
 Now let's order it by taxa.
 
     SELECT *
-    FROM species
-    ORDER BY taxa ASC;
+    FROM cataloguue
+    ORDER BY Dates ASC;
 
 The keyword `ASC` tells us to order it in Ascending order.
 We could alternately use `DESC` to get descending order.
 
     SELECT *
     FROM species
-    ORDER BY taxa DESC;
+    ORDER BY Dates DESC;
 
 `ASC` is the default.
 
@@ -196,13 +189,13 @@ We can also sort on several fields at once.
 To truly be alphabetical, we might want to order by genus then species.
 
     SELECT *
-    FROM species
-    ORDER BY genus ASC, species ASC;
+    FROM catalogue
+    ORDER BY Dates ASC, Author ASC;
 
 > ## Challenge
 >
-> - Write a query that returns year, species_id, and weight in kg from
-> the surveys table, sorted with the largest weights at the top.
+> - Write a query that returns year, eebo id, and page from
+> the catalogue table, sorted with the largest page lengths at the top.
 {: .challenge}
 
 ## Order of execution
@@ -211,10 +204,10 @@ Another note for ordering. We don’t actually have to display a column to sort 
 it.  For example, let’s say we want to order the birds by their species ID, but
 we only want to see genus and species.
 
-    SELECT genus, species
-    FROM species
-    WHERE taxa = 'Bird'
-    ORDER BY species_id ASC;
+    SELECT title, term
+    FROM catalogue
+    WHERE author = 'Bacon, Francis, 1561-1626.'
+    ORDER BY eebo ASC;
 
 We can do this because sorting occurs earlier in the computational pipeline than
 field selection.
@@ -232,9 +225,9 @@ we recommend to put each clause on its own line.
 > ## Challenge
 >
 > - Let's try to combine what we've learned so far in a single
-> query.  Using the surveys table write a query to display the three date fields,
-> `species_id`, and weight in kilograms (rounded to two decimal places), for
-> individuals captured in 1999, ordered alphabetically by the `species_id`.
+> query.  Using the catalogue table write a query to display the title,
+> terms field and the page length (rounded to two decimal places), for
+> titles published in 1650, ordered alphabetically by the author.
 > - Write the query as a single line, then put each clause on its own line, and
 > see how more legible the query becomes!
 {: .challenge}
