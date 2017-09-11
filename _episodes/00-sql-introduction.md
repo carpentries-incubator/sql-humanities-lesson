@@ -21,8 +21,8 @@ _Note: this should have been done by participants before the start of the worksh
 
 We use [DB Browser for SQLite](http://sqlitebrowser.org/)
 and the 
-[Portal Project dataset](https://figshare.com/articles/Portal_Project_Teaching_Database/1314459)
-throughout this lesson. See [Setup](/sql-ecology-lesson/setup/) for
+[TCP Database](https://github.com/iaine/humanities-lesson-data/blob/master/tcp.db)
+throughout this lesson. See [Setup](/sql-humanities-lesson/setup/) for
 instructions on how to download the data, and also how to install and open
 SQLite Manager.
 
@@ -37,12 +37,7 @@ use it for analysis and visualization.
 ## Dataset Description
 
 The data we will be using is a time-series for the texts collected and encoded by
-the Text Creation Partnership. 
-
-This is a real dataset. We've
-simplified it just a little bit for the workshop, but you can download the
-[full dataset](http://esapubs.org/archive/ecol/E090/118/) and work with it using
-exactly the same tools we'll learn about today.
+the Text Creation Partnership. This is a real dataset.
 
 ## Questions
 
@@ -61,7 +56,7 @@ We'll need the following three files:
 > What information is contained in each file?  Specifically, if I had 
 > the following research questions: 
 > 
-> * How has the hindfoot length and weight of *Martin Luther* species changed over time?
+> * How has the length and dates of *Martin Luther* title attributions changed over time?
 > * What is the average number of each titles, per year?  
 > * What information can I learn about *Martin Luther* species in the 1500s, over time?
 > 
@@ -124,9 +119,9 @@ export data and the [details of data types](#datatypediffs).
 
 ## Relational databases
 
-Let's look at a pre-existing database, the `portal_mammals.sqlite`
-file from the Portal Project dataset that we downloaded during
-[Setup](/sql-ecology-lesson/setup/). Clicking on the "open file" icon, then
+Let's look at a pre-existing database, the `tcp.db`
+file from the Humanities dataset that we downloaded during
+[Setup](/sql-humanities-lesson/setup/). Clicking on the "open file" icon, then
 find that file and clicking on it will open the database.
 
 You can see the tables in the database by looking at the left hand side of the
@@ -178,7 +173,7 @@ follow these instructions:
     - **Database -> New Database**
     - Give a name **Ok -> Open**. Creates the database in the opened folder
 2. Start the import **Database -> Import**
-3. Select the `TCP.csv` file to import
+3. Select the `authors.csv` file to import
 4. Give the table a name that matches the file name (`authors`), or use the default
 5. If the first row has column headings, check the appropriate box
 6. Make sure the delimiter and quotation options are appropriate for the CSV files.  Ensure 'Ignore trailing Separator/Delimiter' is left *unchecked*.
@@ -186,21 +181,12 @@ follow these instructions:
 8. When asked if you want to modify the table, click **OK**
 9. Set the data types for each field using the suggestions in the table below (this includes fields from `dates` and `titles` tables also):
 
-| Field             | Data Type      | Motivation                                                                       | Table(s)          |
-|-------------------|:---------------|----------------------------------------------------------------------------------|-------------------|
-| day               | INTEGER        | Having data as numeric allows for meaningful arithmetic and comparisons          | surveys           |
-| genus             | TEXT           | Field contains text data                                                 	| species           |
-| hindfoot_length   | REAL           | Field contains measured numeric data                                             | surveys           |
-| month             | INTEGER        | Having data as numeric allows for meaningful arithmetic and comparisons          | surveys           |
-| plot_id           | INTEGER        | Field contains numeric data	    						| plots, surveys    |
-| plot_type         | TEXT           | Field contains text data                                                 	| plots             |
-| record_id         | INTEGER        | Field contains numeric data 							| surveys           |
-| sex               | TEXT           | Field contains text data                                                 	| surveys           |
-| species_id        | TEXT           | Field contains text data								| species, surveys  |
-| species           | TEXT           | Field contains text data                                                 	| species           |
-| taxa              | TEXT           | Field contains text data                                                 	| species           |
-| weight            | REAL           | Field contains measured numerical data                                           | surveys           |
-| year              | INTEGER        | Allows for meaningful arithmetic and comparisons                                 | surveys           |
+| Field             | Data Type      | Motivation                                                                  | Table(s)               |
+|-------------------|:---------------|-----------------------------------------------------------------------------|------------------------|
+| eebo              | TEXT           | Field contains an index for joining queries           		           | authors, titles, dates |
+| author            | TEXT           | Field contains text data                                                    | authors                |
+| dates             | TEXT           | Field contains date as text                                                 | dates                  |
+| titles            | TEXT           | Field contains text data                                                    | titles, tcp            |
 
 
 Finally, click **OK** one more time to confirm the operation.
@@ -208,14 +194,14 @@ Finally, click **OK** one more time to confirm the operation.
 
 > ## Challenge
 >
-> - Import the `authors` and `dates` tables
+> - Import the `titles` and `dates` tables
 {: .challenge}
 
 You can also use this same approach to append new data to an existing table.
 
 ## Adding data to existing tables
 
-1. "Browse and Search" tab -> Add
+1. "File" tab -> Import -> Table from CSV file
 1. Enter data into a csv file and append
 
 
