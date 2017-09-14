@@ -6,15 +6,15 @@ permalink: /setup/
 
 > ## Data
 {: .prereq}
-**Download** this data to your computer: [http://dx.doi.org/10.6084/m9.figshare.1314459](http://dx.doi.org/10.6084/m9.figshare.1314459). Click on **Download all** to download the zip file. Unzip it to a location that you can easily find on your computer.
+**Download** this data to your computer: [Humanities SQL data](https://github.com/iaine/humanities-lesson-data/blob/master/data/sql/sql.zip). Click on **Download all** to download the zip file. Unzip it to a location that you can easily find on your computer.
 
 #### About the data
-The data for this lesson is a part of the Data Carpentry Ecology workshop. 
-It is a teaching version of the Portal Database data. 
+The data for this lesson is a part of the Data Carpentry Humanities workshop. 
+It is a teaching version of the EEBO/TCP data. 
  
 The data for this lesson and the workshop are in the 
-[Portal Project Teaching Database](https://figshare.com/articles/Portal_Project_Teaching_Database/1314459) 
-available on FigShare, with a CC-BY license 
+[Humanities Data repository](https://github.com/iaine/humanities-lesson-data/tree/master/data/sql) 
+available on Github, with a CC-0 license 
 available for reuse.
 
 
@@ -25,36 +25,17 @@ use a simple database manager called [SQLite](http://www.sqlite.org/)
 in our lessons.
     
 
-We will use [SQLite Manager](https://addons.mozilla.org/en-us/firefox/addon/sqlite-manager/)
-    plugin for the [Firefox web browser](https://www.mozilla.org/en-US/firefox/new/). If you don't have Firefox installed, you need to install it first and
-    then you will be able to add the plugin.
+We will use [DB Browser for SQLite](http://sqlitebrowser.org/).
 
 
 ### Windows
 
-- If you don't already have Firefox, download Firefox from the [Firefox download page](https://www.mozilla.org/en-US/firefox/new/)
-- Install Firefox following the installer instructions
-- Install the SQLite Manager add on:  
-Within Firefox, go to [https://addons.mozilla.org/en-us/firefox/addon/sqlite-manager/](https://addons.mozilla.org/en-us/firefox/addon/sqlite-manager/). 
-- Click on the green 'Add to Firefox'
-- When a window pops up, click on 'Install'
-- When the next box pops up, click on 'Restart Now' to restart Firefox
-- Add SQLite Manager to the menu:  
-**Menu (the three horizontal lines
-near the top right corner of Firefox) -&gt; Customize, then drag the SQLite
-Manager icon to one of the empty menu squares on the right, Exit Customize**
-- Open SQLite Manager:  
-**Menu -&gt; SQLite Manager**
-
+- If you don't already have DB Browser for SQLite, download it from
+https://github.com/sqlitebrowser/sqlitebrowser/releases/download/v3.10.0/DB.Browser.for.SQLite-3.10.0-win64.exe
+- When a window pops up, follow instructions to install it. 
 ### Mac
 
-- If you don't already have Firefox, download Firefox from the [Firefox download page](https://www.mozilla.org/en-US/firefox/new/)
-- Install Firefox following the installer instructions
-- Install the SQLite Manager add on:  
-Within Firefox, go to [https://addons.mozilla.org/en-us/firefox/addon/sqlite-manager/](https://addons.mozilla.org/en-us/firefox/addon/sqlite-manager/). 
-- Click on the green 'Add to Firefox'
-- When a window pops up, click on 'Install'
-- When the next box pops up, click on 'Restart Now' to restart Firefox. 
-- After restart the SQLite Manager will be added ot the **Tools** menu
-- Open SQLite Manager:  
-**Tools -&gt; SQLite Manager**
+- If you don't already have DB Browser forSQLite, download it from:
+https://github.com/sqlitebrowser/sqlitebrowser/releases/download/v3.10.0/DB.Browser.for.SQLite-3.10.0.dmg
+- When a window pops up, drag the icon into the Applications folder. 
+- Go to Applications and then double click the icon
