@@ -43,7 +43,7 @@ the Text Creation Partnership. This is a real dataset.
 
 First, let's download and look at some of the cleaned spreadsheets 
 from the 
-[Portal Project dataset](https://figshare.com/articles/Portal_Project_Teaching_Database/1314459).  
+[Humanities dataset](https://github.com/iaine/humanities-lesson-data/tree/master/data/sql).  
 We'll need the following three files: 
 
 * `authors.csv`
