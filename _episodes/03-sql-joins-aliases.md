@@ -50,7 +50,7 @@ that has the following column names:
 
 
 Alternatively, we can use the word `USING`, as a short-hand.  In this case we are
-telling the manager that we want to combine `authors` with `titlees` and that
+telling the manager that we want to combine `authors` with `titles` and that
 the common column is `species_id`.
 
     SELECT *
