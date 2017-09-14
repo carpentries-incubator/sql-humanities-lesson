@@ -17,9 +17,8 @@ keypoints:
 
 ## Writing my first query
 
-Let's start by using the **TCP** table. Here we have data on every
-individual that was captured at the site, including when they were captured,
-what plot they were captured on, their species ID, sex and weight in grams.
+Let's start by using the **catalogue** table. Here we have data on every
+title that is included in the catalogue.
 
 Let’s write an SQL query that selects only the year column from the
 surveys table. SQL queries can be written in the box located under 
