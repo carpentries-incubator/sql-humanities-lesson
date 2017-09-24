@@ -114,7 +114,7 @@ starting in the year 1640:
 
     SELECT *
     FROM catalogue
-    WHERE (year >= '1640') AND (status = 'Free');
+    WHERE (date >= '1640') AND (status = 'Free');
 
 Note that the parentheses are not needed, but again, they help with
 readability.  They also ensure that the computer combines `AND` and `OR`
@@ -135,7 +135,7 @@ to understand.  It is equivalent to saying `WHERE (author = 'Aylett, Robert, 158
 
     SELECT *
     FROM catalogue
-    WHERE (year >= 1580) AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
+    WHERE (date >= 1580) AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
 
 We started with something simple, then added more clauses one by one, testing
 their effects as we went along.  For complex queries, this is a good strategy,
@@ -151,7 +151,7 @@ commented version of the above query can be written as:
     -- These are in the catalogue table, and we are interested in all columns
     SELECT * FROM surveys
     -- Sampling year is in the column `Date`, and we want to include after 1580
-    WHERE (year >= 2000)
+    WHERE (date >= 1580)
     -- Author names
     AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
 
@@ -161,7 +161,7 @@ comments; this is especially true of more complex queries.
 ## Sorting
 
 We can also sort the results of our queries by using `ORDER BY`.
-For simplicity, let’s go back to the **species** table and alphabetize it by taxa.
+For simplicity, let’s go back to the **catalogue** table and order by publication date.
 
 First, let's look at what's in the **catalogue** table. It's a table of the eebo catalogue id and the 
 information for each id.
@@ -169,27 +169,27 @@ information for each id.
     SELECT *
     FROM catalogue;
 
-Now let's order it by taxa.
+Now let's order it by date.
 
     SELECT *
-    FROM cataloguue
-    ORDER BY Dates ASC;
+    FROM catalogue
+    ORDER BY date ASC;
 
 The keyword `ASC` tells us to order it in Ascending order.
 We could alternately use `DESC` to get descending order.
 
     SELECT *
-    FROM species
-    ORDER BY Dates DESC;
+    FROM catalogue
+    ORDER BY date DESC;
 
 `ASC` is the default.
 
 We can also sort on several fields at once.
-To truly be alphabetical, we might want to order by genus then species.
+To truly be alphabetical, we might want to order by date then author.
 
     SELECT *
     FROM catalogue
-    ORDER BY Dates ASC, Author ASC;
+    ORDER BY date ASC, author ASC;
 
 > ## Challenge
 >
@@ -200,7 +200,7 @@ To truly be alphabetical, we might want to order by genus then species.
 ## Order of execution
 
 Another note for ordering. We don’t actually have to display a column to sort by
-it.  For example, let’s say we want to order the birds by their species ID, but
+it.  For example, let’s say we want to order an author by the EEBO index, but
 we only want to see genus and species.
 
     SELECT title, term
