@@ -40,7 +40,7 @@ There are many other aggregate functions included in SQL including
 >
 > Write a query that returns: total page length, average page length, and the min and max page lengths
 > for all titles encoded over the duration of the project.
-> Can you modify it so that it outputs these values only for weights between 5 and 10?
+> Can you modify it so that it outputs these values only for page lengths between 5 and 10?
 {: .challenge}
 
 Now, let's see how many individuals were counted in each species. We do this
@@ -160,7 +160,7 @@ ignoring the NULL values:
 But if we try to be extra clever, and find the average ourselves,
 we might get tripped up:
 
-    SELECT SUM(pages), COUNT(*), SUM(weight)/COUNT(*)
+    SELECT SUM(pages), COUNT(*), SUM(pages)/COUNT(*)
     FROM civil_war
     WHERE status == 'Free';
 
