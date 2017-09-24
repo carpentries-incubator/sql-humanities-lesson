@@ -24,7 +24,7 @@ and the
 [TCP Database](https://github.com/iaine/humanities-lesson-data/blob/master/tcp.db)
 throughout this lesson. See [Setup](/sql-humanities-lesson/setup/) for
 instructions on how to download the data, and also how to install and open
-SQLite Manager.
+DB Browser for SQLite.
 
 # Motivation
 
@@ -170,27 +170,15 @@ we downloaded earlier.  Close the currently open database and then
 follow these instructions: 
 
 1. Start a New Database 
-    - **Database -> New Database**
-    - Give a name **Ok -> Open**. Creates the database in the opened folder
-2. Start the import **Database -> Import**
+    - **New Database**
+    - Give a name **Save As**. Creates the database in the opened folder
+    - Press **Cancel**
+2. Select File -> Import -> Table from CSV File.
 3. Select the `authors.csv` file to import
 4. Give the table a name that matches the file name (`authors`), or use the default
 5. If the first row has column headings, check the appropriate box
-6. Make sure the delimiter and quotation options are appropriate for the CSV files.  Ensure 'Ignore trailing Separator/Delimiter' is left *unchecked*.
+6. Make sure the delimiter and quotation options are appropriate for the CSV files.
 7. Press **OK**
-8. When asked if you want to modify the table, click **OK**
-9. Set the data types for each field using the suggestions in the table below (this includes fields from `dates` and `titles` tables also):
-
-| Field             | Data Type      | Motivation                                                                  | Table(s)               |
-|-------------------|:---------------|-----------------------------------------------------------------------------|------------------------|
-| eebo              | TEXT           | Field contains an index for joining queries           		           | authors, titles, dates |
-| author            | TEXT           | Field contains text data                                                    | authors                |
-| dates             | TEXT           | Field contains date as text                                                 | dates                  |
-| titles            | TEXT           | Field contains text data                                                    | titles, tcp            |
-
-
-Finally, click **OK** one more time to confirm the operation.
-
 
 > ## Challenge
 >
