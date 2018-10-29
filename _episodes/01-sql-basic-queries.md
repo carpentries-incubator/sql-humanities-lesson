@@ -93,8 +93,7 @@ functions. For example, we could round the values to make them easier to read.
 
 Databases can also filter data – selecting only the data meeting certain
 criteria.  For example, let’s say we only want data for the titles that
-have a free status, which has a species code of DM.  We need to add a
-`WHERE` clause to our query:
+have a free status. We need to add a `WHERE` clause to our query:
 
     SELECT *
     FROM catalogue
