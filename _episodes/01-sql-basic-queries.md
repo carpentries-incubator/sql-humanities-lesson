@@ -68,8 +68,8 @@ returned
 ### Calculated values
 
 We can also do calculations with the values in a query.
-For example, if we wanted to look at the mass of each individual
-on different dates, but we needed it in kg instead of g we would use
+For example, if we wanted to look at the number of pages associated with 
+different dates, but we needed to know how many tens of pages we would use
 
     SELECT date, pages/10
     FROM catalogue;
@@ -93,8 +93,7 @@ functions. For example, we could round the values to make them easier to read.
 
 Databases can also filter data – selecting only the data meeting certain
 criteria.  For example, let’s say we only want data for the titles that
-have a free status, which has a species code of DM.  We need to add a
-`WHERE` clause to our query:
+have a free status. We need to add a `WHERE` clause to our query:
 
     SELECT *
     FROM catalogue

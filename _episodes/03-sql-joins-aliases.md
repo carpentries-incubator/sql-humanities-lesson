@@ -51,7 +51,7 @@ that has the following column names:
 
 Alternatively, we can use the word `USING`, as a short-hand.  In this case we are
 telling the manager that we want to combine `authors` with `titles` and that
-the common column is `species_id`.
+the common column is `eebo`.
 
     SELECT *
     FROM authors
@@ -67,9 +67,8 @@ The output will only have one **eebo** column
 We often won't want all of the fields from both tables, so anywhere we would
 have used a field name in a non-join query, we can use `table.colname`.
 
-For example, what if we wanted information on when individuals of each
-species were captured, but instead of their species ID we wanted their
-actual species names.
+For example, what if we wanted information authors and titles
+but not their EEBO IDs.
 
     SELECT authors.Authors, titles.Title
     FROM titles
@@ -137,7 +136,7 @@ second table because `NULL` is not equal to anything, even itself.
 ### Combining joins with sorting and aggregation
 
 Joins can be combined with sorting, filtering, and aggregation.  So, if we
-wanted average mass of the individuals on each different type of treatment, we
+wanted the average number of pages for each author in the catalogue, we
 could do something like
 
     SELECT authors.author, AVG(catalogue.pages)
