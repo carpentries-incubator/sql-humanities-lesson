@@ -21,7 +21,8 @@ _Note: this should have been done by participants before the start of the worksh
 
 We use [DB Browser for SQLite](http://sqlitebrowser.org/)
 and the 
-[TCP Database](https://github.com/iaine/humanities-lesson-data/blob/master/tcp.db)
+
+[EEBO/TCP Database](https://github.com/iaine/humanities-lesson-data/blob/master/eebo.db)
 throughout this lesson. See [Setup](/sql-humanities-lesson/setup/) for
 instructions on how to download the data, and also how to install and open
 DB Browser for SQLite.
@@ -44,11 +45,12 @@ the Text Creation Partnership. This is a real dataset.
 First, let's download and look at some of the cleaned spreadsheets 
 from the 
 [Humanities dataset](https://github.com/iaine/humanities-lesson-data/tree/master/data/sql).  
-We'll need the following three files: 
+We'll need the following four files: 
 
 * `authors.csv`
 * `titles.csv`
 * `dates.csv`
+* `pages.csv`
 
 > ## Challenge
 >
@@ -119,7 +121,7 @@ export data and the [details of data types](#datatypediffs).
 
 ## Relational databases
 
-Let's look at a pre-existing database, the `tcp.db`
+Let's look at a pre-existing database, the `eebo.db`
 file from the Humanities dataset that we downloaded during
 [Setup](/sql-humanities-lesson/setup/). Clicking on the "open file" icon, then
 find that file and clicking on it will open the database.
@@ -182,7 +184,7 @@ follow these instructions:
 
 > ## Challenge
 >
-> - Import the `titles` and `dates` tables
+> - Import the `titles`, `pages` and `dates` tables
 {: .challenge}
 
 You can also use this same approach to append new data to an existing table.
