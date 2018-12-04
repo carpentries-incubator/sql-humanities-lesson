@@ -184,7 +184,7 @@ follow these instructions:
 
 > ## Challenge
 >
-> - Import the `titles`, `pages` and `dates` tables
+> - Import the `places`, `pages` and `dates` tables
 {: .challenge}
 
 You can also use this same approach to append new data to an existing table.
