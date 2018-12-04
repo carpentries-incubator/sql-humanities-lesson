@@ -17,15 +17,15 @@ keypoints:
 
 ## Writing my first query
 
-Let's start by using the **catalogue** table. Here we have data on every
+Let's start by using the **eebo** table. Here we have data on every
 title that is included in the catalogue.
 
 Let’s write an SQL query that selects only the year column from the
 surveys table. SQL queries can be written in the box located under 
 the "Execute SQL" tab. Click 'Run SQL' to execute the query in the box.
 
-    SELECT date
-    FROM catalogue;
+    SELECT Title
+    FROM eebo;
 
 We have capitalized the words SELECT and FROM because they are SQL keywords.
 SQL is case insensitive, but it helps for readability, and is good style.
@@ -33,13 +33,13 @@ SQL is case insensitive, but it helps for readability, and is good style.
 If we want more information, we can just add a new column to the list of fields,
 right after SELECT:
 
-    SELECT date, author
-    FROM catalogue;
+    SELECT Title, TCP
+    FROM eebo;
 
 Or we can select all of the columns in a table using the wildcard *
 
     SELECT *
-    FROM catalogue;
+    FROM eebo;
 
 ### Limiting results
 
@@ -48,7 +48,7 @@ of what's being returned. In that case you can use the LIMIT command. In particu
 you would want to do this if you were working with large databases.
 
     SELECT *
-    FROM catalogue
+    FROM eebo
     LIMIT 10; 
 
 ### Unique values
@@ -56,14 +56,14 @@ you would want to do this if you were working with large databases.
 If we want only the unique values so that we can quickly see what authors have
 been cataloged we use `DISTINCT` 
 
-    SELECT DISTINCT author
-    FROM catalogue;
+    SELECT DISTINCT Date
+    FROM eebo;
 
 If we select more than one column, then the distinct pairs of values are
 returned
 
-    SELECT DISTINCT author, eebo
-    FROM catalogue;
+    SELECT DISTINCT Date, Title
+    FROM eebo;
 
 ### Calculated values
 
@@ -71,8 +71,8 @@ We can also do calculations with the values in a query.
 For example, if we wanted to look at the number of pages associated with 
 different dates, but we needed to know how many tens of pages we would use
 
-    SELECT date, pages/10
-    FROM catalogue;
+    SELECT Date, PageCount/10
+    FROM eebo;
 
 When we run the query, the expression `pages / 10` is evaluated for each
 row and appended to that row, in a new column. If we used the `INTEGER` data type
@@ -81,8 +81,8 @@ correct results in that case divide by `10.0`. Expressions can use any fields,
 any arithmetic operators (`+`, `-`, `*`, and `/`) and a variety of built-in
 functions. For example, we could round the values to make them easier to read.
 
-    SELECT eebo, title, ROUND(pages / 10, 2)
-    FROM catalogue;
+    SELECT TCP, title, ROUND(pages / 10, 2)
+    FROM eebo;
 
 > ## Challenge
 >
@@ -96,24 +96,24 @@ criteria.  For example, let’s say we only want data for the titles that
 have a free status. We need to add a `WHERE` clause to our query:
 
     SELECT *
-    FROM catalogue
+    FROM eebo
     WHERE status='Free';
 
 We can do the same thing with numbers.
 Here, we only want the data since 1640:
 
     SELECT * 
-    FROM catalogue
-    WHERE date >= '1641';
+    FROM eebo
+    WHERE date >= '1600';
 
 If we used the `TEXT` data type for the year the `WHERE` clause should
-be `year >= '1641'`. We can use more sophisticated conditions by combining tests
+be `Date >= '1600'`. We can use more sophisticated conditions by combining tests
 with `AND` and `OR`.  For example, suppose we want the data on *Free* status
-starting in the year 1640:
+starting in the year 1600:
 
     SELECT *
     FROM catalogue
-    WHERE (date >= '1640') AND (status = 'Free');
+    WHERE (date >= '1600') AND (status = 'Free');
 
 Note that the parentheses are not needed, but again, they help with
 readability.  They also ensure that the computer combines `AND` and `OR`
@@ -122,7 +122,7 @@ in the way that we intend.
 > ## Challenge
 >
 > - Produce a table listing the data for all titles in the catalogue 
-> with a page length more than 75, telling us the date, eebo id code, and page. 
+> with a page length more than 75, telling us the date, TCP id code, and page. 
 {: .challenge}
 
 ## Building more complex queries
@@ -133,8 +133,8 @@ to understand.  It is equivalent to saying `WHERE (author = 'Aylett, Robert, 158
 = 'Bacon, Francis, 1561-1626.'), but reads more neatly:
 
     SELECT *
-    FROM catalogue
-    WHERE (date >= 1580) AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
+    FROM eebo
+    WHERE (date >= '1580') AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
 
 We started with something simple, then added more clauses one by one, testing
 their effects as we went along.  For complex queries, this is a good strategy,
@@ -148,9 +148,9 @@ commented version of the above query can be written as:
 
     -- Get post 1580 data on authors
     -- These are in the catalogue table, and we are interested in all columns
-    SELECT * FROM surveys
+    SELECT * FROM eebo
     -- Sampling year is in the column `Date`, and we want to include after 1580
-    WHERE (date >= 1580)
+    WHERE (date >= '1580')
     -- Author names
     AND (author IN ('Aylett, Robert, 1583-1655?', 'Bacon, Francis, 1561-1626.'));
 
@@ -166,19 +166,19 @@ First, let's look at what's in the **catalogue** table. It's a table of the eebo
 information for each id.
 
     SELECT *
-    FROM catalogue;
+    FROM eebo;
 
 Now let's order it by date.
 
     SELECT *
-    FROM catalogue
+    FROM eebo
     ORDER BY date ASC;
 
 The keyword `ASC` tells us to order it in Ascending order.
 We could alternately use `DESC` to get descending order.
 
     SELECT *
-    FROM catalogue
+    FROM eebo
     ORDER BY date DESC;
 
 `ASC` is the default.
@@ -187,12 +187,12 @@ We can also sort on several fields at once.
 To truly be alphabetical, we might want to order by date then author.
 
     SELECT *
-    FROM catalogue
-    ORDER BY date ASC, author ASC;
+    FROM eebo
+    ORDER BY Date ASC, Author ASC;
 
 > ## Challenge
 >
-> - Write a query that returns year, eebo id, and page from
+> - Write a query that returns year, TCP id, and page from
 > the catalogue table, sorted with the largest page lengths at the top.
 {: .challenge}
 
@@ -202,10 +202,10 @@ Another note for ordering. We don’t actually have to display a column to sort 
 it.  For example, let’s say we want to order an author by the EEBO index, but
 we only want to see genus and species.
 
-    SELECT title, term
-    FROM catalogue
+    SELECT Title, Terms
+    FROM eebo
     WHERE author = 'Bacon, Francis, 1561-1626.'
-    ORDER BY eebo ASC;
+    ORDER BY TCP ASC;
 
 We can do this because sorting occurs earlier in the computational pipeline than
 field selection.
@@ -225,7 +225,7 @@ we recommend to put each clause on its own line.
 > - Let's try to combine what we've learned so far in a single
 > query.  Using the catalogue table write a query to display the title,
 > terms field and the page length (rounded to two decimal places), for
-> titles published in 1650, ordered alphabetically by the author.
+> titles published in 1550, ordered alphabetically by the author.
 > - Write the query as a single line, then put each clause on its own line, and
 > see how more legible the query becomes!
 {: .challenge}
