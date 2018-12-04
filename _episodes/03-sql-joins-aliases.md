@@ -33,8 +33,8 @@ species codes.
 
     SELECT *
     FROM authors
-    JOIN titles
-    ON authors.eebo = titles.eebo;
+    JOIN dates
+    ON authors.TCP = dates.TCP;
 
 `ON` is like `WHERE`, it filters things out according to a test condition.  We use
 the `table.colname` format to tell the manager what column in which table we are
@@ -44,7 +44,7 @@ The output of the `JOIN` command will have columns from first table plus the
 columns from the second table. For the above command, the output will be a table
 that has the following column names:
 
-| eebo | Authors | eebo | Title | 
+| TCP | Authors | TCP | Date | 
 |---|---|---|---|---|
 | ... |||||||||||||   
 
@@ -55,12 +55,12 @@ the common column is `eebo`.
 
     SELECT *
     FROM authors
-    JOIN titles
-    USING (eebo);
+    JOIN dates
+    USING (TCP);
 
-The output will only have one **eebo** column
+The output will only have one **TCP** column
 
-| eebo | Authors | Title | 
+| TCP | Authors | Date | 
 |---|---|---|---|---|
 | ... |||||||||||||
 
@@ -68,12 +68,12 @@ We often won't want all of the fields from both tables, so anywhere we would
 have used a field name in a non-join query, we can use `table.colname`.
 
 For example, what if we wanted information authors and titles
-but not their EEBO IDs.
+but not their TCP ids.
 
-    SELECT authors.Authors, titles.Title
-    FROM titles
+    SELECT authors.Author, dates.Date
+    FROM dates
     JOIN authors
-    ON titles.EEBO = authors.EEBO;
+    ON dates.TCP = authors.TCP;
 
 | Authors | Title |
 |---|---|---|---|---|
@@ -82,17 +82,17 @@ but not their EEBO IDs.
 Many databases, including SQLite, also support a join through the WHERE clause of a query.  
 For example, you may see the query above written without an explicit JOIN.
 
-	SELECT titles.Title, authors.Author
-	FROM authors, titles
-	WHERE authors.eebo = titles.eebo;
+	SELECT dates.Date, authors.Author
+	FROM authors, dates
+	WHERE authors.TCP = dates.TCP;
 
 For the remainder of this lesson, we'll stick with the explicit use of the JOIN keyword for 
 joining tables in SQL.  
 
 > ## Challenge:
 >
-> - Write a query that returns the authors, terms and page lengths
-> of every EEBO ID captured in the catalogue.
+> - Write a query that returns the authors and places
+> of every TCP ID captured in the catalogue.
 {: .challenge}
 
 ### Different join types
@@ -101,14 +101,14 @@ We can count the number of records returned by our original join query.
 
     SELECT COUNT(*)
     FROM authors
-    JOIN titles
-    USING (eebo);
+    JOIN places
+    USING (TCP);
 
 Notice that this number is smaller than the number of records present in the
 catalogue data.
 
     SELECT COUNT(*) 
-    FROM catalogue;
+    FROM eebo;
 
 This is because, by default, SQL only returns records where the joining value
 is present in the join columns of both tables (i.e. it takes the _intersection_
@@ -121,12 +121,12 @@ table by using the command `LEFT OUTER JOIN`, or `LEFT JOIN` for short.
 
 > ## Challenge:
 >
-> - Re-write the original query to keep all the entries present in the `surveys`
+> - Re-write the original query to keep all the entries present in the `eebo`
 > table. How many records are returned by this query?
 {: .challenge}
 
 > ## Challenge:
-> - Count the number of records in the `catalogue` table that have a `NULL` value
+> - Count the number of records in the `places` table that have a `NULL` value
 > in the `eebo` column.
 {: .challenge}
 
@@ -139,11 +139,11 @@ Joins can be combined with sorting, filtering, and aggregation.  So, if we
 wanted the average number of pages for each author in the catalogue, we
 could do something like
 
-    SELECT authors.author, AVG(catalogue.pages)
-    FROM catalogue
+    SELECT authors.author, AVG(eebo.PageCount)
+    FROM eebo
     JOIN authors
-    ON authors.eebo = catalogue.eebo
-    GROUP BY catalogue.pages;
+    ON authors.TCP = eebo.TCP
+    GROUP BY eebo.PageCount;
 
 > ## Challenge:
 >
@@ -165,16 +165,16 @@ place of `NULL`.
 
 We can represent unknown ids with "U" instead of `NULL`:
 
-    SELECT eebo, vid, IFNULL(vid, 'U')
-    FROM catalogue;
+    SELECT TCP, Place, IFNULL(Place, 'U')
+    FROM places;
 
-The lone "vid" column is only included in the query above to illustrate where
+The lone "Place" column is only included in the query above to illustrate where
 `IFNULL` has changed values; this isn't a usage requirement.
 
 > ## Challenge:
 >
-> - Write a query that returns 30 instead of `NULL` for values in the
-> `pages` column.
+> - Write a query that returns 'NP' instead of `NULL` for values in the
+> `Author` column.
 {: .challenge}
 
 > ## Challenge:
@@ -184,19 +184,19 @@ The lone "vid" column is only included in the query above to illustrate where
 {: .challenge}
 
 `IFNULL` can be particularly useful in `JOIN`. When joining the `authors` and
-`dates` tables earlier, some results were excluded because the `species_id`
+`dates` tables earlier, some results were excluded because the ``
 was `NULL`. We can use `IFNULL` to include them again, re-writing the `NULL` to
 a valid joining value:
 
-    SELECT dates.date, authors.author
-    FROM authors
-    JOIN dates
-    ON dates.eebo = IFNULL(authors.eebo, 'AB');
+    SELECT eebo.Place, places.Place
+    FROM places
+    JOIN eebo
+    ON eebo.Place = IFNULL(places.Place, 'AB');
 
 > ## Challenge:
 >
-> - Write a query that returns the number of titles of the authors caught in each
-> plot, using `IFNULL` to assume that unknown titles are all of the authors
+> - Write a query that returns the number of titles of the authors caught in
+> each plot, using `IFNULL` to assume that unknown titles are all of the authors
 > "Nemo".
 {: .challenge}
 
@@ -206,8 +206,8 @@ is returned. This is useful for "nulling out" specific values.
 
 We can "null out" vid:
 
-    SELECT eebo, vid, NULLIF(vid, 7)
-    FROM catalogue;
+    SELECT TCP, Place, NULLIF(Place, 'London')
+    FROM eebo;
 
 Some more functions which are common to SQL databases are listed in the table
 below:
@@ -245,21 +245,21 @@ clearer we can use aliases to assign new names to things in the query.
 
 We can alias both table names:
 
-    SELECT dt.dates, auth.authors
+    SELECT dt.Date, auth.Author
     FROM dates AS dt
     JOIN authors AS auth
-    ON dt.eebo = auth.eebo;
+    ON dt.TCP = auth.TCP;
 
 And column names:
 
-    SELECT dt.dates AS yr, auth.authors AS author
+    SELECT dt.Date AS yr, auth.Author AS author
     FROM dates AS dt
     JOIN authors AS auth
-    ON dt.eebo = auth.eebo;
+    ON dt.TCP = auth.TCP;
 
 The `AS` isn't technically required, so you could do
 
-    SELECT dt.dates yr
+    SELECT dt.Date yr
     FROM dates dt;
 
 but using `AS` is much clearer so it is good style to include it.
@@ -275,8 +275,16 @@ but using `AS` is much clearer so it is good style to include it.
   2. How many years have similar amounts of books published?
 > > ## Proposed solutions:
 > >
-> > 1. Solution: `SELECT date as year, count(*)  FROM catalogues  GROUP BY year ORDER BY year DESC`
+> > 1. Solution: 
+> > `SELECT date as year, count(*)  
+> >  FROM eebo  
+> >  GROUP BY year 
+> >  ORDER BY year DESC`
 > >
-> > 2. Solution: `SELECT date as year, count(*) AS volumes  FROM catalogues  GROUP BY year ORDER BY volumes DESC`
+> > 2. Solution: 
+> >  `SELECT date as year, count(*) AS volumes  
+> >   FROM eebo  
+> >   GROUP BY year 
+> >   ORDER BY volumes DESC`
  {: .solution}
 {: .challenge}
