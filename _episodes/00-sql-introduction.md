@@ -23,7 +23,7 @@ We use [DB Browser for SQLite](http://sqlitebrowser.org/)
 and the 
 
 [EEBO/TCP Database](https://github.com/iaine/humanities-lesson-data/blob/master/eebo.db)
-throughout this lesson. See [Setup](/sql-humanities-lesson/setup/) for
+throughout this lesson. See [Setup]({% link setup.md %}) for
 instructions on how to download the data, and also how to install and open
 DB Browser for SQLite.
 
