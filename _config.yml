@@ -10,6 +10,10 @@ title: "SQL for Humanities"
 
 email: "team@carpentries.org"
 
+# Life cycle stage of the lesson
+# possible values: "pre-alpha", "alpha", "beta", "stable"
+life_cycle: "alpha"
+
 #------------------------------------------------------------
 # Generic settings (should not need to change).
 #------------------------------------------------------------
